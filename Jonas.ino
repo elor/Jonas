@@ -49,7 +49,7 @@ void setup()
 
   // Interrupt setzen, um BPM via Sensor zu zaehlen
   pinMode(PIN_SENSOR, INPUT_PULLUP); // alternativ: INPUT
-  attachInterrupt(digitalPinToInterrupt(PIN_SENSOR), bpmInterrupt, RISING); // alternativ: FALLING
+  attachInterrupt(digitalPinToInterrupt(PIN_SENSOR), bpmInterrupt, FALLING); // alternativ: RISING
 }
 
 /**
