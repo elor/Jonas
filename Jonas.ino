@@ -70,8 +70,8 @@ void bpmInterrupt() {
 
 void writeDisplay() {
   lcd.setCursor(0, 1);
-  char buffer[16];
-  sprintf(buffer, "%6d%-9s", bpm, BPM_SUFFIX); // f�gt bpm und BPM_SUFFIX zu einer Zeile zusammen
+  char buffer[17];
+  sprintf(buffer, "%6d%-9s", bpm, BPM_SUFFIX); // fuegt bpm und BPM_SUFFIX zu einer Zeile zusammen
   lcd.print(buffer);
 }
 
