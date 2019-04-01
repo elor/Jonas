@@ -59,6 +59,10 @@ void bpmInterrupt() {
   int bpm_diff_millis = bpm_last_millis - millis();
   bpm_last_millis = millis();
 
+  if (bpm_diff_millis == 0) {
+    return;
+  }
+
   const int millis_per_minute = 60000;
 
   bpm = millis_per_minute / (bpm_diff_millis * SPEED_SENSOR_SEGMENTS);
