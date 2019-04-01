@@ -95,5 +95,4 @@ void loop()
 {
   controlMotor();
   writeDisplay();
-  bpm += 1;
 }
