@@ -31,7 +31,7 @@ const int BEATS_PRO_UMDREHUNG = 1;
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 int bpm_last_millis = 0;
-int bpm = 0;
+int bpm = -1;
 const char BPM_SUFFIX[] = " u/min"; // z.B. "BPM" oder "u/min". max. 9 Zeichen.
 
 
@@ -58,6 +58,9 @@ void setup()
 void bpmInterrupt() {
   int bpm_diff_millis = bpm_last_millis - millis();
   bpm_last_millis = millis();
+
+  bpm = bpm_diff_millis;
+  return;
 
   if (bpm_diff_millis < 10) {
     // zu frueh
