@@ -10,15 +10,15 @@
  * - A0: Potentiometer fuer Motorsteuerung (0V-5V)
  * - A4: Display SDA (Datensignal fuer Display. I2C-Bus)
  * - A5: Display SCL (Clocksignal fuer Display. I2C-Bus)
- * - ~5: Speed Sensor digitaler Ausgang (LOW: dunkel, HIGH: hell. Wir warten auf Sprung
+ * -  2: Speed Sensor digitaler Ausgang (LOW: dunkel, HIGH: hell. Wir warten auf Sprung
  *                                       LOW->HIGH und machen eine Drehzahl draus)
- * - ~6: H-Br�cke, Pin 2 (Steuersignal f�r Motor 1, PWM. 0-255 = 0V-5V)
+ * - ~3: H-Bruecke, Pin 2 (Steuersignal fuer Motor 1, PWM. 0-255 = 0V-5V)
  */
 
 const int PIN_POTI = A0;
 // LCD Pins werden ueber LiquidCrystal_I2C-Bibliothek gesetzt.
-const int PIN_SENSOR = 3;
-const int PIN_MOTOR = 6;
+const int PIN_SENSOR = 2;
+const int PIN_MOTOR = 3;
 
 const int SPEED_SENSOR_SEGMENTS = 20;
 const int BEATS_PRO_UMDREHUNG = 1;
@@ -32,7 +32,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 int bpm_last_millis = 0;
 int bpm = 0;
-const char BPM_SUFFIX[] = "u/min"; // z.B. "BPM" oder "u/min". max. 9 Zeichen.
+const char BPM_SUFFIX[] = " u/min"; // z.B. "BPM" oder "u/min". max. 9 Zeichen.
 
 
 void setup()
@@ -56,13 +56,11 @@ void setup()
  * Diese Funktion wird per Interrupt aufgerufen, sobald der Sensor Licht sieht.
  */
 void bpmInterrupt() {
-  bpm += 1;
-  return;
-  
   int bpm_diff_millis = bpm_last_millis - millis();
   bpm_last_millis = millis();
 
-  if (bpm_diff_millis == 0) {
+  if (bpm_diff_millis < 10) {
+    // zu frueh
     return;
   }
 
@@ -86,7 +84,7 @@ void controlMotor() {
 
 /** Arduino Hauptschleife
  * Aufgaben:
- *  1. Poti lesen und direkt an Motor �bergeben. Nix speichern.
+ *  1. Poti lesen und direkt an Motor uebergeben. Nix speichern.
  *  2. BPM auf Display ausgeben.
  *
  *  BPM werden vom Sensor per Interrupt ermittelt. Ist einfacher.
