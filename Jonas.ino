@@ -59,13 +59,13 @@ void bpmInterrupt() {
   int bpm_diff_millis = bpm_last_millis - millis();
   bpm_last_millis = millis();
 
-  bpm = bpm_diff_millis;
-  return;
-
-  if (bpm_diff_millis < 10) {
+  if (bpm_diff_millis == 0) {
     // zu frueh
     return;
   }
+
+  bpm = bpm_diff_millis;
+  return;
 
   const int millis_per_minute = 60000;
 
