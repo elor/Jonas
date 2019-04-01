@@ -56,6 +56,9 @@ void setup()
  * Diese Funktion wird per Interrupt aufgerufen, sobald der Sensor Licht sieht.
  */
 void bpmInterrupt() {
+  bpm += 1;
+  return;
+  
   int bpm_diff_millis = bpm_last_millis - millis();
   bpm_last_millis = millis();
 
