@@ -32,7 +32,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 int bpm_last_millis = 0;
 int bpm = 0;
-const char BPM_SUFFIX[] = ""; // z.B. "BPM" oder "u/min". max. 9 Zeichen.
+const char BPM_SUFFIX[] = "u/min"; // z.B. "BPM" oder "u/min". max. 9 Zeichen.
 
 
 void setup()
@@ -42,7 +42,7 @@ void setup()
 
   // obere Zeile im Display. Bleibt ja gleich.
   lcd.setCursor(0, 0);
-  lcd.print("BPM:");
+  lcd.print("Drehzahl:");
 
   pinMode(PIN_POTI, INPUT);
   pinMode(PIN_MOTOR, OUTPUT);
