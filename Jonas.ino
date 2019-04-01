@@ -31,7 +31,7 @@ const int BEATS_PRO_UMDREHUNG = 1;
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 int bpm_last_millis = 0;
-int bpm = -1;
+int BPM = -1;
 const char BPM_SUFFIX[] = " u/min"; // z.B. "BPM" oder "u/min". max. 9 Zeichen.
 
 
@@ -56,7 +56,7 @@ void setup()
  * Diese Funktion wird per Interrupt aufgerufen, sobald der Sensor Licht sieht.
  */
 void bpmInterrupt() {
-  int bpm_diff_millis = bpm_last_millis - millis();
+  int bpm_diff_millis = millis() - bpm_last_millis;
   bpm_last_millis = millis();
 
   if (bpm_diff_millis == 0) {
@@ -64,18 +64,18 @@ void bpmInterrupt() {
     return;
   }
 
-  bpm = bpm_diff_millis;
+  BPM = bpm_diff_millis;
   return;
 
   const int millis_per_minute = 60000;
 
-  bpm = millis_per_minute / (bpm_diff_millis * SPEED_SENSOR_SEGMENTS);
+  BPM = millis_per_minute / (bpm_diff_millis * SPEED_SENSOR_SEGMENTS);
 }
 
 void writeDisplay() {
   lcd.setCursor(0, 1);
   char buffer[17];
-  sprintf(buffer, "%6d%-9s", bpm, BPM_SUFFIX); // fuegt bpm und BPM_SUFFIX zu einer Zeile zusammen
+  sprintf(buffer, "%6d%-9s", BPM, BPM_SUFFIX); // fuegt bpm und BPM_SUFFIX zu einer Zeile zusammen
   lcd.print(buffer);
 }
 
