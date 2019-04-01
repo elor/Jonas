@@ -17,7 +17,7 @@
 
 const int PIN_POTI = A0;
 // LCD Pins werden ueber LiquidCrystal_I2C-Bibliothek gesetzt.
-const int PIN_SENSOR = 5;
+const int PIN_SENSOR = 3;
 const int PIN_MOTOR = 6;
 
 const int SPEED_SENSOR_SEGMENTS = 20;
