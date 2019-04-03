@@ -77,7 +77,7 @@ void writeDisplay() {
   char buffer[17];
   int vorkomma = BPM / 100;
   int nachkomma = abs(BPM % 100);
-  sprintf(buffer, "%5d%-2d%-8s", vorkomma, nachkomma, BPM_SUFFIX); // fuegt bpm und BPM_SUFFIX zu einer Zeile zusammen
+  sprintf(buffer, "%5d.%-2d%-8s", vorkomma, nachkomma, BPM_SUFFIX); // fuegt bpm und BPM_SUFFIX zu einer Zeile zusammen
   lcd.print(buffer);
 }
 
