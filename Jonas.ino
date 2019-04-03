@@ -62,7 +62,7 @@ void bpmInterrupt() {
   int bpm_diff_micros = micros() - bpm_last_micros;
   bpm_last_micros = micros();
 
-  if (bpm_diff_micros == SPEED_SENSOR_DEADTIME) {
+  if (bpm_diff_micros < SPEED_SENSOR_DEADTIME) {
     //  oh gott, viel zu schnell
     return;
   }
