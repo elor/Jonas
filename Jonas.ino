@@ -33,8 +33,8 @@ const int SPEED_SENSOR_DEADTIME = 50000; // microseconds
  */
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-int bpm_last_micros = 0;
-int BPM = -12345;
+long bpm_last_micros = 0;
+long BPM = -12345;
 const char BPM_SUFFIX[] = " u/min"; // z.B. "BPM" oder "u/min". max. 8 Zeichen.
 
 
@@ -59,17 +59,21 @@ void setup()
  * Diese Funktion wird per Interrupt aufgerufen, sobald der Sensor Licht sieht.
  */
 void bpmInterrupt() {
-  int bpm_diff_micros = micros() - bpm_last_micros;
-  bpm_last_micros = micros();
+  long now_micros = micros();
+  long bpm_diff_micros = now_micros - bpm_last_micros;
 
   if (bpm_diff_micros < SPEED_SENSOR_DEADTIME) {
     //  oh gott, viel zu schnell
     return;
   }
 
-  const int MICROS_PER_MINUTE = 60000000;
+  const long SECONDS_PER_MINUTE = 60;
+  const long MILLIS_PER_MINUTE = 1000 * SECONDS_PER_MINUTE;
+  const long MICROS_PER_MINUTE = 1000 * MILLIS_PER_MINUTE;
+  const long double_digit_factor = 100;
 
-  BPM = 100*MICROS_PER_MINUTE / (bpm_diff_micros * SPEED_SENSOR_SEGMENTS);
+  BPM = MICROS_PER_MINUTE / (bpm_diff_micros * SPEED_SENSOR_SEGMENTS / double_digit_factor);
+  bpm_last_micros = now_micros;
 }
 
 void writeDisplay() {
