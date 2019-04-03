@@ -72,7 +72,12 @@ void bpmInterrupt() {
   const long MICROS_PER_MINUTE = 1000 * MILLIS_PER_MINUTE;
   const long double_digit_factor = 100;
 
-  BPM = MICROS_PER_MINUTE / (bpm_diff_micros * SPEED_SENSOR_SEGMENTS / double_digit_factor);
+  int new_bpm = MICROS_PER_MINUTE / (bpm_diff_micros * SPEED_SENSOR_SEGMENTS / double_digit_factor);
+  if (new_bpm <= 0) {
+    // oh gott, unter null
+    return;
+  }
+  BPM = new_bpm;
   bpm_last_micros = now_micros;
 }
 
