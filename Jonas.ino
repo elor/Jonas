@@ -24,7 +24,7 @@ const int PIN_MOTOR = 3;
 const int SPEED_SENSOR_SEGMENTS = 20;
 const int BEATS_PRO_UMDREHUNG = 1;
 
-long DISPLAY_BPM_HALBWERTSZEIT = 100; // milliseconds
+float DISPLAY_BPM_HALBWERTSZEIT = 100; // milliseconds
 
 const int SPEED_SENSOR_DEADTIME = 50000; // microseconds
 
@@ -112,10 +112,12 @@ void convergeBPMValue() {
   long istwert = DISPLAY_BPM;
 
   long current_millis = millis();
-  long delta_t = current_millis - DISPLAY_BPM_LAST_MILLIS;
+  float delta_t = current_millis - DISPLAY_BPM_LAST_MILLIS;
   DISPLAY_BPM_LAST_MILLIS = current_millis;
 
-  DISPLAY_BPM += (sollwert - istwert) * exp(-DISPLAY_BPM_HALBWERTSZEIT * delta_t);
+  float zerfallskonstante = 0.693f / DISPLAY_BPM_HALBWERTSZEIT;
+
+  DISPLAY_BPM += long((sollwert - istwert) / exp(zerfallskonstante * delta_t));
 }
 
 /** Arduino Hauptschleife
