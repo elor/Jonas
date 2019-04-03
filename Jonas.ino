@@ -23,6 +23,8 @@ const int PIN_MOTOR = 3;
 const int SPEED_SENSOR_SEGMENTS = 20;
 const int BEATS_PRO_UMDREHUNG = 1;
 
+const int SPEED_SENSOR_DEADTIME = 50000; // microseconds
+
 /** Display in lcd-Variable einrichten. Initialisierung findet spaeter statt.
  * 0x27: I2C-Adresse des Displays
  * 16: 16 Spalten
@@ -30,9 +32,9 @@ const int BEATS_PRO_UMDREHUNG = 1;
  */
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-int bpm_last_millis = 0;
-int BPM = -1;
-const char BPM_SUFFIX[] = " u/min"; // z.B. "BPM" oder "u/min". max. 9 Zeichen.
+int bpm_last_micros = 0;
+double BPM = -123.45;
+const char BPM_SUFFIX[] = " u/min"; // z.B. "BPM" oder "u/min". max. 8 Zeichen.
 
 
 void setup()
@@ -56,26 +58,23 @@ void setup()
  * Diese Funktion wird per Interrupt aufgerufen, sobald der Sensor Licht sieht.
  */
 void bpmInterrupt() {
-  int bpm_diff_millis = millis() - bpm_last_millis;
-  bpm_last_millis = millis();
+  int bpm_diff_micros = micros() - bpm_last_micros;
+  bpm_last_micros = micros();
 
-  if (bpm_diff_millis == 0) {
-    // zu frueh
+  if (bpm_diff_micros == SPEED_SENSOR_DEADTIME) {
+    //  oh gott, viel zu schnell
     return;
   }
 
-  BPM = bpm_diff_millis;
-  return;
+  const double MICROS_PER_MINUTE = 60000000;
 
-  const int millis_per_minute = 60000;
-
-  BPM = millis_per_minute / (bpm_diff_millis * SPEED_SENSOR_SEGMENTS);
+  BPM = MICROS_PER_MINUTE / double(bpm_diff_micros * SPEED_SENSOR_SEGMENTS);
 }
 
 void writeDisplay() {
   lcd.setCursor(0, 1);
   char buffer[17];
-  sprintf(buffer, "%6d%-9s", BPM, BPM_SUFFIX); // fuegt bpm und BPM_SUFFIX zu einer Zeile zusammen
+  sprintf(buffer, "%7.2lf%-8s", BPM, BPM_SUFFIX); // fuegt bpm und BPM_SUFFIX zu einer Zeile zusammen
   lcd.print(buffer);
 }
 
