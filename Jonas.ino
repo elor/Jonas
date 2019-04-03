@@ -24,7 +24,11 @@ const int PIN_MOTOR = 3;
 const int SPEED_SENSOR_SEGMENTS = 20;
 const int BEATS_PRO_UMDREHUNG = 1;
 
+long DISPLAY_BPM_HALBWERTSZEIT = 100; // milliseconds
+
 const int SPEED_SENSOR_DEADTIME = 50000; // microseconds
+
+
 
 /** Display in lcd-Variable einrichten. Initialisierung findet spaeter statt.
  * 0x27: I2C-Adresse des Displays
@@ -33,8 +37,15 @@ const int SPEED_SENSOR_DEADTIME = 50000; // microseconds
  */
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+/*
+ * Variablen für BPM-Berechnungen und Displaywert-Konvergenz
+ */
 long bpm_last_micros = 0;
 long BPM = -12345;
+
+long DISPLAY_BPM = 0;
+long DISPLAY_BPM_LAST_MILLIS = 0;
+
 const char BPM_SUFFIX[] = " u/min"; // z.B. "BPM" oder "u/min". max. 8 Zeichen.
 
 
@@ -96,6 +107,17 @@ void controlMotor() {
 	analogWrite(PIN_MOTOR, motor);
 }
 
+void convergeBPMValue() {
+  long sollwert = BPM;
+  long istwert = DISPLAY_BPM;
+
+  long current_millis = millis();
+  long delta_t = current_millis - DISPLAY_BPM_LAST_MILLIS;
+  DISPLAY_BPM_LAST_MILLIS = current_millis;
+
+  DISPLAY_BPM += (sollwert - istwert) * exp(-DISPLAY_BPM_HALBWERTSZEIT * delta_t);
+}
+
 /** Arduino Hauptschleife
  * Aufgaben:
  *  1. Poti lesen und direkt an Motor uebergeben. Nix speichern.
@@ -106,5 +128,6 @@ void controlMotor() {
 void loop() 
 {
   controlMotor();
+  convergeBPMValue();
   writeDisplay();
 }
