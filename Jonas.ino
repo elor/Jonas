@@ -88,7 +88,7 @@ void bpmInterrupt() {
     // oh gott, unter null
     return;
   }
-  BPM = new_bpm;
+  BPM = 3*BPM/4 + new_bpm/4; // ueber die letzten 4 Werte "mitteln"
   bpm_last_micros = now_micros;
 }
 
