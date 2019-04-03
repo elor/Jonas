@@ -4,6 +4,7 @@
  * via Arduino Library Manager installieren.
  */
 #include <LiquidCrystal_I2C.h>
+#include <math.h>
 
 /* PINS:
  * 
@@ -33,7 +34,7 @@ const int SPEED_SENSOR_DEADTIME = 50000; // microseconds
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 int bpm_last_micros = 0;
-double BPM = -123.45;
+int BPM = -12345;
 const char BPM_SUFFIX[] = " u/min"; // z.B. "BPM" oder "u/min". max. 8 Zeichen.
 
 
@@ -66,15 +67,17 @@ void bpmInterrupt() {
     return;
   }
 
-  const double MICROS_PER_MINUTE = 60000000;
+  const int MICROS_PER_MINUTE = 60000000;
 
-  BPM = MICROS_PER_MINUTE / double(bpm_diff_micros * SPEED_SENSOR_SEGMENTS);
+  BPM = 100*MICROS_PER_MINUTE / (bpm_diff_micros * SPEED_SENSOR_SEGMENTS);
 }
 
 void writeDisplay() {
   lcd.setCursor(0, 1);
   char buffer[17];
-  sprintf(buffer, "%7.2lf%-8s", BPM, BPM_SUFFIX); // fuegt bpm und BPM_SUFFIX zu einer Zeile zusammen
+  int vorkomma = BPM / 100;
+  int nachkomma = abs(BPM % 100);
+  sprintf(buffer, "%5d%-2d%-8s", vorkomma, nachkomma, BPM_SUFFIX); // fuegt bpm und BPM_SUFFIX zu einer Zeile zusammen
   lcd.print(buffer);
 }
 
